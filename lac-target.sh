@@ -21,6 +21,8 @@ if [ $diff -gt 50 ]; then
     echo "big diff: $diff"
     curl -X POST https://textbelt.com/text --data-urlencode phone=$phone --data-urlencode message="$store Formula page changed $diff pixels. Buy: $url" -d key=$apikey #send the text message
     echo "text message sent"
+    cp fresh_$store.png fresh_$store$(date +%N).png
+    cp old_$store.png old_$store$(date +%N).png
 else
     echo "lil diff: $diff"
 fi

@@ -12,7 +12,7 @@ function timeout(ms) {
     const page = await browser.newPage();
     await page.setViewport({width: 1920, height: 1080});
     await page.goto(myArgs[0]);
-    await timeout(5000)
+    await timeout(8000)
     await page.screenshot({path: myArgs[1]});
     browser.close();
 })();

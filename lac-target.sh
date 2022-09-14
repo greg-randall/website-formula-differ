@@ -5,27 +5,16 @@ source config.sh
 url='https://www.target.com/p/similac-360-total-care-non-gmo-infant-formula-powder-30-8oz/-/A-86036991'
 store='target'
 
+continue=true
 
-if [ -f "fresh_$store.png" ]; then #Make sure we have a screenshot
-    mv fresh_$store.png old_$store.png
-    node screenshot.js $url "fresh_$store.png"
-    diff=$(compare -metric ae old_$store.png fresh_$store.png null: 2>&1) #use imagemagick to count the pixels that are different between the screenshots
-else #no screenshot let's shoot one
-    node screenshot.js $url "fresh_$store.png"
-    diff=0
-    echo "fresh screenshot not found" >> $store.log
-fi
-
-
-if [ $diff -gt 50 ]; then
-    echo "big diff: $diff"
-    curl -X POST https://textbelt.com/text --data-urlencode phone=$phone --data-urlencode message="$store Formula page changed $diff pixels. Buy: $url" -d key=$apikey #send the text message
-    echo "text message sent"
-    cp fresh_$store.png fresh_$store$(date +%N).png
-    cp old_$store.png old_$store$(date +%N).png
-else
-    echo "lil diff: $diff"
-fi
-
-
-echo "$diff - $(date)" >> $store.log
+while $continue
+    do
+    diff=$(node page-getter.js $url | grep -i 'get it by' | wc -l)
+    if [ $diff -ge 1 ]; then
+        curl -X POST https://textbelt.com/text --data-urlencode phone=$phone --data-urlencode message="$store formula available! $url" -d key=$apikey >> api_$store.log #send the text message
+        continue=false
+    fi
+    output="$diff - $(date)"
+    echo $output
+    echo $output >> $store.log
+done

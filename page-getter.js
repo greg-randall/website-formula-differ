@@ -13,6 +13,6 @@ function timeout(ms) {
     await page.setViewport({width: 1920, height: 1080});
     await page.goto(myArgs[0]);
     await timeout(8000)
-    await page.screenshot({path: myArgs[1]});
+    console.log(await page.content());
     browser.close();
 })();
